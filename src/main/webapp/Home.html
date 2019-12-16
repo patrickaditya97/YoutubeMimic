@@ -1,0 +1,263 @@
+<!-- <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="google-signin-client_id"
+        content="952349414594-pd0unj1vs023229ufld4ec94q4b3a3cm.apps.googleusercontent.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://apis.google.com/js/client.js" async defer></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <style>
+        nav .brand-logo {
+            padding-left: 15px;
+        }
+
+        input,
+        select,
+        textarea {
+            color: white;
+        }
+
+        textarea:focus,
+        input:focus {
+            color: white;
+        }
+
+        nav {
+            position: fixed;
+            z-index: 10;
+        }
+
+        #video_body {
+            /* display: none; */
+            margin-top: 100px;
+        }
+
+        .nav_mobile {
+            display: none
+        }
+
+
+        .btn-floating.btn-large {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+        }
+
+        .btn-large {
+            line-height: 25px;
+            font-size: 30px;
+        }
+    </style>
+
+    <title>Welcome</title>
+</head>
+
+<body onload="init()">
+
+    <nav>
+        <div class="nav-wrapper #212121 grey darken-4 z-depth-4">
+            <a href="/Home.html" class="brand-logo"><img src="images/YouTube1.png" alt="Logo" style="width: 45px;"></a>
+
+            <ul id="nav_mobile" class=" center hide-on-med-and-down">
+
+                <li class="nav_items" id="playListItem" style="margin-left:80px; position: absolute;">
+                    <Button class="btn waves-effect waves-light blue darken-3" 
+                            style="margin-bottom: 8px;" href="#playlist.html" id="playlist_button">Playlist</Button>
+                </li>
+
+                <form action="#" id="searchForm">
+
+                    <li class="nav_items">
+                        <div class="input-field col s12 " style="padding-left: 5px;margin-left: 420px;">
+                            <input name="searchTerm" type="text" id="autocomplete-input" class="grey darken-1"
+                                style="width:400px">
+                        </div>
+                    </li>
+
+                    <li class="nav_items">
+                        <button class="btn waves-effect waves-light grey darken-3" type="submit" name="action"
+                            style="height: 3rem;margin-bottom: 6px; margin-left: 20px;">Search</button>
+                    </li>
+
+                </form>
+
+                <li class="nav_items" id="changeHere">
+
+                </li>
+
+            </ul>
+
+        </div>
+    </nav>
+
+    <div>
+        <main>
+
+            <div class="row">
+                <div class="section"></div>
+                <div id="video_body" style="display:block">
+
+                    <div class="col s3 container">
+                        <div class="card" style=" height: 335px;">
+                            <div class="card-content" style="height: 300px;">
+                                <figure style="width:260px;height:260px;margin:0;">
+                                    <img src="https://www.w3schools.com/css/paris.jpg" alt="test"
+                                        style="max-width: 100%;height: 250px;">
+                                </figure>
+                                <a href="#">video 1</a>
+                                <a class="btn-floating btn-large waves-effect waves-light red"
+                                    style="float: right;">+</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col s3 container">
+                        <div class="card" style=" height: 335px;">
+                            <div class="card-content" style="height: 300px;">
+                                <figure style="width:260px;height:260px;margin:0;">
+                                    <img src="https://www.w3schools.com/css/paris.jpg" alt="test"
+                                        style="max-width: 100%;height: 250px;">
+                                </figure>
+                                <a href="#">video 2</a>
+                                <a class="btn-floating btn-large waves-effect waves-light red"
+                                    style="float: right;">+</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col s3 container">
+                        <div class="card" style=" height: 335px;">
+                            <div class="card-content" style="height: 300px;">
+                                <figure style="width:260px;height:260px;margin:0;">
+                                    <img src="https://www.w3schools.com/css/paris.jpg" alt="test"
+                                        style="max-width: 100%;height: 250px;">
+                                </figure>
+                                <a href="#">video 3</a>
+                                <a class="btn-floating btn-large waves-effect waves-light red"
+                                    style="float: right;">+</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col s3 container">
+                        <div class="card" style=" height: 335px;">
+                            <div class="card-content" style="height: 300px;">
+                                <figure style="width:260px;height:260px;margin:0;">
+                                    <img src="https://www.w3schools.com/css/paris.jpg" alt="test"
+                                        style="max-width: 100%;height: 250px;">
+                                </figure>
+                                <a href="#">video 4</a>
+                                <a class="btn-floating btn-large waves-effect waves-light red"
+                                    style="float: right;">+</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="Playlist_body" style=" width: 700px; margin: auto; margin-top: 90px; display: none;">
+                    <div id="Playlist_content">
+
+                        <div class="card" id="playlist_card">
+                            <div class="card-content">
+                                <div class="card-title">
+
+                                    Your Playlists Are Shown Here
+
+                                    <button style="float: right;" type="submit" id="[set_videoid_here]"
+                                        class="btn waves-effect waves-light grey darken-3 Playlist_delete"> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button data-target="modal_create" style=" margin: auto; width: 100%; height: 60px;" type="submit"
+                        class="btn waves-effect waves-light grey darken-3 Playlist_new modal-trigger"> New Playlist
+                    </button>
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+
+    <!-- Add to Playlist Modal Structure -->
+    <div id="modal_add" class="modal" style="height:90%">
+        <div class="modal-content" id="addPlay_id">
+
+            <div class="card" id="playlist_card">
+
+                <div class="card-content">
+                    <div class="card-title">
+                        Playlist 1
+                        <!-- set your json response "pl title" here in JS -->
+                    </div>
+                    <input type="hidden" value="12345678">
+                </div>
+
+            </div>
+
+            <div class="card" id="playlist_card">
+
+                <div class="card-content">
+                    <div class="card-title">
+                        Playlist 2
+                        <!-- set your json response "pl title" here in JS -->
+                        <input type="hidden" value="12345678">
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Create Playlist Modal -->
+    <div id="modal_create" class="modal">
+        <div class="modal-content">
+            <h4>Create Playlist</h4>
+
+            <div class="input-field col s6">
+                <input id="Pl_name" type="text" class="validate" style="color: black;">
+                <label for="Pl_name">Playlist Name</label>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button href="#" class="modal-close btn waves-effect waves-light grey darken-3"
+                onclick="createNewPlaylist()">Create</button>
+        </div>
+    </div>
+
+    <script>
+
+        /* For modal */
+        document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('.modal');
+            var instances = M.Modal.init(elems);
+            // console.log(instances)
+        });
+
+    </script>
+
+    <script src="loader.js"></script>
+    <script src="Script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+</body>
+
+</html>
