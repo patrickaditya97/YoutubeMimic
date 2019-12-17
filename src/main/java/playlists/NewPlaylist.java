@@ -41,7 +41,7 @@ public class NewPlaylist extends HttpServlet
 		Entity e = new Entity("Playlist_data", "a" + UUID.randomUUID().toString());
 		
 		e.setProperty("User_Id", newSess.getAttribute("email"));
-		e.setProperty("PlId", UUID.randomUUID().toString());
+		e.setProperty("PlId", UUID.randomUUID().toString().replaceAll("-", "a"));
 		e.setProperty("Pl_Title", req.getParameter("title"));
 		e.setProperty("status", 1);
 		
