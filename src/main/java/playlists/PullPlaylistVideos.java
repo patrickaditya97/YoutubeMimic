@@ -53,6 +53,7 @@ public class PullPlaylistVideos extends HttpServlet
 			vb.setTitle(e1.getProperty("title").toString());
 			vb.setPlid(e1.getProperty("plid").toString());
 			vb.setImg(e1.getProperty("img").toString());
+			vb.setUcode(e1.getProperty("uniquecode").toString());
 			vb.setVid(e1.getProperty("vid").toString());
 			
 			vblist.add(vb);

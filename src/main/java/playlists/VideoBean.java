@@ -6,6 +6,7 @@ public class VideoBean
 	private String img;
 	private String vid;
 	private String plid;
+	private String ucode;
 	
 	
 	
@@ -32,6 +33,12 @@ public class VideoBean
 	}
 	public void setPlid(String plid) {
 		this.plid = plid;
+	}
+	public String getUcode() {
+		return ucode;
+	}
+	public void setUcode(String ucode) {
+		this.ucode = ucode;
 	}
 	
 	

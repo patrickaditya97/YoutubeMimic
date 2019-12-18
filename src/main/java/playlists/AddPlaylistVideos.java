@@ -3,6 +3,7 @@ package playlists;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -32,16 +33,13 @@ public class AddPlaylistVideos extends HttpServlet
 		String img = req.getParameter("img");
 		int hashcode = (title+plid+vid+img).hashCode();
 		
-		
-		
 		video.setProperty("title", title);
 		video.setProperty("vid", vid);
 		video.setProperty("plid", plid);
 		video.setProperty("img", img);
-		video.setProperty("uniquecode", hashcode);
+		video.setProperty("uniquecode", UUID.randomUUID().toString().replace('-', 'b'));
 		
 		ds.put(video);
-		
 	}
 	
 	

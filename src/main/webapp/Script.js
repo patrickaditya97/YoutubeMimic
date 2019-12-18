@@ -26,7 +26,8 @@ function signOut() {
     });
 }
 
-function signUserOut() {
+function signUserOut() 
+{
 
     axios.get("http://localhost:8080/logout")
         .then(window.location = "https://mail.google.com/mail/u/0/?logout&hl=en")
@@ -111,26 +112,38 @@ function createDiv(items) {
 
 
 
+/*---------------------------------------------Playlist operations---------------------------------------------*/
 
-/*-------------------Playlist operations------------------------*/
-
-//creating a new playlist
-function createNewPlaylist() {
-    var play_create = document.getElementById("Pl_name").value;
-    // console.log(play_create)
-    var url = "/newplaylist?title=" + play_create
-
-    var xhr = new XMLHttpRequest();
+function HttpRequests(method, url, callback)
+{
+    var xhr = new XMLHttpRequest()
 
     xhr.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-            console.log(this.responseText)
-            showData(this.responseText)
+            if(callback === null)
+            {
+                console.log(this.responseText)
+            }
+            else
+            {
+                callback(this.responseText)
+            }
         }
     }
-    xhr.open("GET", url)
+    xhr.open(method, url)
     xhr.send()
 
+}
+
+
+//creating a new playlist
+function createNewPlaylist() {
+    console.log("creating new playlist")
+
+    var play_create = document.getElementById("Pl_name").value;
+    var url = "/newplaylist?title=" + play_create
+
+    HttpRequests("GET" ,url, showData)
 }
 
 
@@ -138,16 +151,8 @@ function createNewPlaylist() {
 function pullData(callback) {
     console.log("pulling..........")
     var url = "/pullplaylist"
-    var xhr = new XMLHttpRequest()
 
-    xhr.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            // console.log(this.responseText)
-            callback(this.responseText)
-        }
-    }
-    xhr.open("GET", url)
-    xhr.send()
+    HttpRequests("GET", url, callback)
 }
 
 function showData(data) 
@@ -168,14 +173,14 @@ function showData(data)
                                         <div class="card-content">
                                             <div class="card-title"><a id="`+ e.plId +`" onclick="openPlaylist()" href="#modal_playlist_videos" class="modal-trigger">`
                                                 + e.pl_title +
-                                                `</a><button style="float: right;" type="submit" id="`+ e.plId +`"
+                                                `</a><button style="float: right;" type="submit" id="`+ e.plId +`" onclick="Deleteplaylist()"
                                                     class="btn waves-effect waves-light grey darken-3 modal-close Playlist_delete"> Delete
                                                 </button>
                                             </div>
                                         </div>
                                     </div>`
 
-        console.log(playlist_elem)
+        // console.log(playlist_elem)
 
         playlist.appendChild(playlist_elem)
     });
@@ -186,17 +191,9 @@ function showData(data)
 function openPlaylist()
 {
     var Playlist_id = event.target.id
-    var xhr = new XMLHttpRequest()
+    var url = "/pullvideos?plid=" + Playlist_id
 
-    xhr.onreadystatechange = function(){
-        if(this.readyState==4 && this.status==200)
-        {
-            showVideos(this.responseText)
-        }
-    }
-
-    xhr.open("GET", "/pullvideos?plid=" + Playlist_id)
-    xhr.send()
+    HttpRequests("GET", url, showVideos)
 }
 
 
@@ -204,7 +201,7 @@ function showVideos(data)
 {
     var Json = JSON.parse(data)
 
-    // console.log(Json)
+    console.log(Json)
 
     var videosTo = document.getElementById("show_videos_playlist")
     videosTo.innerHTML = ""
@@ -219,7 +216,12 @@ function showVideos(data)
                                                     <img src="`+ e.img +`" alt="test"
                                                         style="max-width: 100%;height: 155px;">
                                                 </figure>
-                                                <a href="https://www.youtube.com/watch?v=`+ e.vid +`">`+ e.title.slice(0,10) +`</a>
+                                                
+                                                <a href="https://www.youtube.com/watch?v=`+ e.vid.trim() +`" target="_blank">`+ e.title +`</a>
+                                                
+                                                <button style="float: right; bottom:110px" onclick="Deletevideo()" id="`+ e.ucode +`"
+                                                    class="btn waves-effect waves-light grey darken-3 modal-close video_delete"> Delete
+                                                </button>
                                             </div>
                                         </div>
                                     </div>`
@@ -235,12 +237,9 @@ var video_buttons = document.getElementById("video_body")
 var video_add_buttons = document.getElementById("addPlay_id")
 var title, img, vid, plid;
 
-console.log(video_buttons)
-
 video_buttons.addEventListener("click", function(){
     if(event.target.classList.contains("add_playlist"))
     {
-        // console.log(event.target)
         title = event.target.getAttribute("data-title")
         img = event.target.getAttribute("data-img")
         vid = event.target.getAttribute("data-id")
@@ -288,16 +287,40 @@ function showPlaylist(data)
 //send video data to backend using xhr
 function SendVideo()
 {
+    var url = "/addvideos?title=" + title + "&img=" + img + "&vid=" +vid+ "&plid=" + plid
+
+    HttpRequests("POST", url, null)
+}
+
+
+
+function Deletevideo()
+{
+    console.log(event.target.id)
+
+    var ucode = event.target.id;
+    var url = "/deletevideos?ucode=" + ucode
+
+    HttpRequests("GET", url, null)
+}
+
+
+function Deleteplaylist()
+{
+    console.log(event.target.id)
+
+    var plid = event.target.id;
+    var url = "/deleteplaylist?plid=" + plid
+
+    HttpRequests("GET", url, null)
+
     var xhr = new XMLHttpRequest()
 
-    xhr.onreadystatechange = function () 
-    {
-        if (this.readyState == 4 && this.status == 200) 
-        {
-            console.log(this.responseText)
+    xhr.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            showData(this.responseText)
         }
     }
-    xhr.open("POST", "/addvideos?title=" + title + "&img=" + img + "&vid=" +vid+ "&plid=" + plid)
+    xhr.open("GET", "/pullplaylist")
     xhr.send()
-
 }
