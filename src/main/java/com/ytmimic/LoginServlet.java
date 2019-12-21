@@ -33,7 +33,7 @@ public class LoginServlet extends HttpServlet
 	
 	public void service(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException
 	{
-		System.out.println("Hello ");		
+		System.out.println("Hello ");
 		
 		HttpSession newSess = req.getSession();
 		System.out.println();
@@ -65,45 +65,6 @@ public class LoginServlet extends HttpServlet
 		
 		ds.put(e);
 		
-		
-		
-		
-		res.sendRedirect("/app");
-			
-
-			
-			
-    	
-//    	sess.setAttribute("id", req.getParameter("id"));
-//    	sess.setAttribute("name", req.getParameter("name"));
-//    	sess.setAttribute("img", req.getParameter("img"));
-//    	sess.setAttribute("email", req.getParameter("email"));
-//	    
-////	    	System.out.println(req.getParameter("name"));
-//    	
-//		String id = (String) sess.getAttribute("id");
-//		String name = (String) sess.getAttribute("name");
-//		String img = (String) sess.getAttribute("img");
-//		String email = (String) sess.getAttribute("email");
-//		
-//		System.out.println("id: " + id);
-//		System.out.println("name: " + name);
-//		System.out.println("email: " + email);
-//		System.out.println("img: " + img);
-//		System.out.println();
-//		
-////			res.sendRedirect("/app");
-//		RequestDispatcher rd = req.getRequestDispatcher("/app");
-//		rd.forward(req, res);
-	    
-	    
+		res.sendRedirect("/Home.html");
 	}
-	
-//	public static void main(String[] args) {
-//		Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
-//	    Date date = new Date();
-//	    Timestamp timestamp2 = new Timestamp(date.getTime());
-//	    
-//	    System.out.println(timestamp2);
-//	}
 }

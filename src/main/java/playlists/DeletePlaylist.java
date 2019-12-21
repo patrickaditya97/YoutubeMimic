@@ -18,7 +18,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 @WebServlet("/deleteplaylist")
 public class DeletePlaylist extends HttpServlet
 {
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException 
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException 
 	{
 		System.out.println(req.getParameter("plid"));
 		

@@ -20,7 +20,7 @@
             padding-left: 15px;
         }
 
-        input,
+        /* input,
         select,
         textarea {
             color: white;
@@ -29,7 +29,7 @@
         textarea:focus,
         input:focus {
             color: white;
-        }
+        } */
 
         nav {
             position: fixed;
@@ -161,7 +161,7 @@
             <h4>Create Playlist</h4>
 
             <div class="input-field col s6">
-                <input id="Pl_name" type="text" class="validate" style="color: black;">
+                <input id="Pl_name" type="text" class="validate" style="color: black;" onfocus="this.value=''">
                 <label for="Pl_name">Playlist Name</label>
             </div>
 

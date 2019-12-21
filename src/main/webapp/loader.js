@@ -1,7 +1,7 @@
 (function()
 {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://localhost:8080/checkSession")
+    xhr.open("GET", "/checkSession")
     xhr.send() 
 
     xhr.onreadystatechange = function()
