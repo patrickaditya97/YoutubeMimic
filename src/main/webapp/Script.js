@@ -29,7 +29,6 @@ function signOut() {
 function signUserOut() {
 
     axios.get("/logout")
-        // .then(window.location = "https://mail.google.com/mail/u/0/?logout&hl=en")
         .then(setTimeout(()=>{document.location.replace("/loginPage")},1000))
         .catch(false)
 
@@ -80,11 +79,13 @@ function init() {
 })()
 
 
-//Creating new video items and displaying
+//Creating new video items by using youtube api data and displaying
 function createDiv(items) {
-
+    
     document.getElementById("video_body").style.display="block"
+    document.getElementById("video_player").style.display="none"
     document.getElementById("Playlist_body").style.display="none"
+
     var videos = document.getElementById('video_body')
     videos.innerHTML = "";
 
@@ -97,24 +98,67 @@ function createDiv(items) {
                                                 <img src="` + element.snippet.thumbnails.high.url + `" alt="test"
                                                     style="max-width: 100%;height: 250px;">
                                             </figure>
-                                            <a href=" https://www.youtube.com/watch?v=`+ element.id.videoId + `">` + element.snippet.title.slice(0, 25) + `</a>
-                                            <a href="#modal_add" class="btn-floating btn-large waves-effect waves-light red modal-trigger add_playlist" style="float: right;" onclick="pullData(showPlaylist)"
-                                                data-id=" `+ element.id.videoId + ` " data-img="` + element.snippet.thumbnails.high.url + `" data-title="` + element.snippet.title + `">+</a>
+                                            <a href="#`+element.id.videoId+`" data-vid="`+ element.id.videoId + `" onclick="openvideo()">
+                                                <span data-vid="`+ element.id.videoId + `" title="` + element.snippet.title + `">
+                                                    ` + element.snippet.title.slice(0, 25) + `
+                                                </span>
+                                            </a>
+                                            <a href="#modal_add" class="btn-floating btn-large waves-effect waves-light red modal-trigger add_playlist" 
+                                                style="float: right;" onclick="pullData(showPlaylist)"
+                                                data-id="`+ element.id.videoId + `" data-img="` + element.snippet.thumbnails.high.url + `" data-title="` + element.snippet.title + `">+</a>
                                         </div>
                                     </div>
                                 </div>`
 
         videos.appendChild(video_elem)
     });
+    openSuggestions(items)
 }
 
 
 
 
 
-//playling videos in a seperate page
+//playling videos in a seperate page along with other video suggestions
+function openvideo()
+{
+    console.log(document.getElementById("add_sug_playlist"))
 
+    document.getElementById('video_body').style.display = "none"
+    document.getElementById('video_player').style.display = "block"
 
+    var video_id = event.target.getAttribute("data-vid")
+    
+    document.getElementById('yt_iframe').setAttribute('src', "https://www.youtube.com/embed/" + video_id)
+
+}
+
+function openSuggestions(item)
+{
+    console.log(item)
+
+    var videos = document.getElementById('video_sug')
+    videos.innerHTML = "";
+
+    item.forEach(element => {
+
+        var video_elem = document.createElement('div')
+        video_elem.innerHTML = `<div class="card">
+                                    <div class="card-content">
+                                        <a href="#`+element.id.videoId+`" data-vid="`+ element.id.videoId + `" onclick="openvideo()">
+                                            <span data-vid="`+ element.id.videoId + `" title="` + element.snippet.title + `">
+                                                ` + element.snippet.title.slice(0, 25) + `
+                                            </span>
+                                        </a>
+                                        <a href="#modal_add" class="btn-floating btn-large waves-effect waves-light red modal-trigger add_sug_playlist" 
+                                            style="margin-top:10px;float: right;" onclick="pullData(showPlaylist)"
+                                            data-id="`+ element.id.videoId + ` " data-img="` + element.snippet.thumbnails.high.url + `" data-title="` + element.snippet.title + `">+</a>
+                                    </div>
+                                </div>`
+
+        videos.appendChild(video_elem)
+    });
+}
 
 
 
@@ -161,7 +205,7 @@ function createNewPlaylist() {
 }
 
 
-
+//pulling playlists from the datastore and displaying
 function pullData(callback) {
     console.log("pulling..........")
     var url = "/pullplaylist"
@@ -171,6 +215,7 @@ function pullData(callback) {
 
 function showData(data) {
     document.getElementById("video_body").style.display = "none";
+    document.getElementById("video_player").style.display = "none";
     document.querySelector("#Playlist_body").style.display = "block";
 
     console.log("Showing__" + data)
@@ -217,6 +262,7 @@ function showVideos(data) {
     console.log(Json)
 
     document.getElementById("video_body").style.display = "block";
+    document.getElementById("video_player").style.display = "none";
     document.querySelector("#Playlist_body").style.display = "none";
 
     var videosTo = document.getElementById("video_body")
@@ -232,10 +278,14 @@ function showVideos(data) {
                                                 <img src="`+ e.img + `" alt="test"
                                                     style="max-width: 100%;height: 250px;">
                                             </figure>
-                                            <a href=" https://www.youtube.com/watch?v=`+ e.vid.trim() + ` " target="_blank">` + e.title.slice(0, 25) + `... </a>
                                             
+                                            <a href="#`+e.vid.trim()+`" data-vid="`+ e.vid.trim() + `" onclick="openvideo()">
+                                                <span data-vid="`+ e.vid.trim() + `" title="` + e.title + `">
+                                                    ` + e.title.slice(0, 25) + `
+                                                </span>
+                                            </a>
                                             <a href="#modal_add" class="btn waves-effect waves-light red add_playlist" id="`+ e.ucode + `" data-plid="` + e.plid.trim() + `"
-                                            style="float: right; position:absolute" onclick="Deletevideo()" >delete</a>
+                                            style="float: right;" onclick="Deletevideo()" >delete</a>
                                         </div>
                                     </div>
                                 </div>`
@@ -243,13 +293,46 @@ function showVideos(data) {
         // console.log(playlist_elem)
         videosTo.appendChild(playlist_elem)
     })
+
+    openPlaySuggestions(data)
+    
 }
 
+function openPlaySuggestions(item)
+{
+    console.log(item)
+    var Json = JSON.parse(item)
+    var videos = document.getElementById('video_sug')
+    videos.innerHTML = "";
+
+    Json.forEach(element => {
+
+        var video_elem = document.createElement('div')
+        video_elem.innerHTML = `<div class="card">
+                                    <div class="card-content">
+                                        <a href="#`+element.vid+`" data-vid="`+ element.vid + `" onclick="openvideo()">
+                                            <span data-vid="`+ element.vid + `" title="` + element.title + `">
+                                                ` + element.title.slice(0, 25) + `
+                                            </span>
+                                        </a>
+                                        
+                                        <a href="#modal_add" class="btn waves-effect waves-light red add_playlist" id="`+ element.ucode + `" data-plid="` + element.plid.trim() + `"
+                                            style="float: right;" onclick="Deletevideo()" >delete</a>
+
+                                    </div>
+                                </div>`
+
+        videos.appendChild(video_elem)
+    });
+}
 
 //button actions to add videos to playlist
+var video_sug_buttons = document.getElementById("video_player")
 var video_buttons = document.getElementById("video_body")
 var video_add_buttons = document.getElementById("addPlay_id")
 var title, img, vid, plid;
+
+console.log(video_sug_buttons)
 
 video_buttons.addEventListener("click", function () {
     if (event.target.classList.contains("add_playlist")) {
@@ -258,7 +341,15 @@ video_buttons.addEventListener("click", function () {
         vid = event.target.getAttribute("data-id")
         console.log(title + "  " + img + "  " + vid)
     }
+})
 
+video_sug_buttons.addEventListener("click", function(){
+    if (event.target.classList.contains("add_sug_playlist")) {
+        title = event.target.getAttribute("data-title")
+        img = event.target.getAttribute("data-img")
+        vid = event.target.getAttribute("data-id")
+        console.log(title + "  " + img + "  " + vid)
+    }
 })
 
 video_add_buttons.addEventListener("click", function () {
@@ -295,7 +386,7 @@ function showPlaylist(data) {
 }
 
 
-//send video data to backend using xhr
+//send video data to backend using xhr and add to a playlist
 function SendVideo() {
     var url = "/addvideos?title=" + title + "&img=" + img + "&vid=" + vid + "&plid=" + plid
 

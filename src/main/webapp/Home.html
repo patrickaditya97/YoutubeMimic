@@ -70,8 +70,8 @@
             <ul id="nav_mobile" class=" center hide-on-med-and-down">
 
                 <li class="nav_items" id="playListItem" style="margin-left:80px; position: absolute;">
-                    <Button class="btn waves-effect waves-light blue darken-3" 
-                            style="margin-bottom: 8px;" href="#playlist.html" id="playlist_button" onclick="pullData(showData)">Playlist</Button>
+                    <Button class="btn waves-effect waves-light blue darken-3" style="margin-bottom: 8px;"
+                        href="#playlist.html" id="playlist_button" onclick="pullData(showData)">Playlist</Button>
                 </li>
 
                 <form action="#" id="searchForm">
@@ -99,43 +99,89 @@
         </div>
     </nav>
 
-    <div>
-        <main>
 
-            <div class="row">
-                <div class="section"></div>
-                <div id="video_body" style="display:block">
+    <main>
 
-                </div>
+        <div class="row">
+            <div class="section"></div>
 
-                <div id="Playlist_body" style=" width: 700px; margin: auto; margin-top: 90px; display: none;">
-                    <div id="Playlist_content">
-
-                        <div class="card" id="playlist_card">
-                            <div class="card-content">
-                                <div class="card-title">
-
-                                    Your Playlists Are Shown Here
-
-                                    <button style="float: right;" type="submit" id="[set_videoid_here]"
-                                        class="btn waves-effect waves-light grey darken-3 Playlist_delete"> Delete
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <button data-target="modal_create" style=" margin: auto; width: 100%; height: 60px;" type="submit"
-                        class="btn waves-effect waves-light grey darken-3 Playlist_new modal-trigger"> New Playlist
-                    </button>
-
-                </div>
+            <div id="video_body" style="display:block">
 
             </div>
 
-        </main>
-    </div>
+            <div id="Playlist_body" style=" width: 700px; margin: auto; margin-top: 90px; display: none;">
+                <div id="Playlist_content">
+
+                    <div class="card" id="playlist_card">
+                        <div class="card-content">
+                            <div class="card-title">
+
+                                Your Playlists Are Shown Here
+
+                                <button style="float: right;" type="submit" id="[set_videoid_here]"
+                                    class="btn waves-effect waves-light grey darken-3 Playlist_delete"> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <button data-target="modal_create" style=" margin: auto; width: 100%; height: 60px;" type="submit"
+                    class="btn waves-effect waves-light grey darken-3 Playlist_new modal-trigger"> New Playlist
+                </button>
+
+            </div>
+
+            <div class="col s12" id="video_player" style="display: none; margin-top: 70px;">
+
+                <div class="play_vid col s8">
+
+                    <iframe height="460px" width="860px" frameborder="0" id="yt_iframe"
+                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                    </iframe>
+
+                </div>
+
+                <div id="video_sug" class="video_sug col s4" style="overflow-y: scroll; height: 460px;">
+
+                    <div class="card">
+                        <div class="card-content">
+                            <a> Title 1 </a>
+                            <a href="#modal_add" data-name="patrick" data-place="chennai"
+                                class="btn-floating btn-large waves-effect waves-light red modal-trigger atag"
+                                style="margin-top:10px;float: right;">+</a>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     <!-- show playlist videos in a Modal Structure -->
@@ -146,7 +192,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Add to Playlist Modal Structure -->
     <div id="modal_add" class="modal" style="height:90%">
         <div class="modal-content" id="addPlay_id">
