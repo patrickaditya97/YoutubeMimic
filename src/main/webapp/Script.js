@@ -12,7 +12,7 @@ function onSignIn(googleUser) {
     console.log(img + 'Image URL: ' + profile.getImageUrl());
     console.log(email + 'Email: ' + profile.getEmail());
 
-    axios.get("/login?id=" + id_token + "&name=" + name + "&img=" + img + "&email=" + email)
+    axios.post("/login?id=" + id_token + "&name=" + name + "&img=" + img + "&email=" + email)
         .then(signOut())
         .then(setTimeout(()=>{window.location.replace("/Home.html")},1000))
         .catch(false)
@@ -28,7 +28,7 @@ function signOut() {
 
 function signUserOut() {
 
-    axios.get("/logout")
+    axios.post("/logout")
         .then(setTimeout(()=>{document.location.replace("/loginPage")},1000))
         .catch(false)
 
@@ -61,6 +61,7 @@ function init() {
                 part: "snippet",
                 type: "video",
                 q: encodeURIComponent(form.searchTerm.value).replace(/%20/g, "+"),
+                safeSearch: "strict",
                 maxResults: 12,
                 order: "viewCount",
                 publishedAfter: "2015-01-01T00:00:00Z"
@@ -133,6 +134,7 @@ function openvideo()
 
 }
 
+//show's the videos displayed for search on a side bar
 function openSuggestions(item)
 {
     console.log(item)
@@ -165,6 +167,7 @@ function openSuggestions(item)
 
 /*---------------------------------------------Playlist operations---------------------------------------------*/
 
+//Http requests are handled through this with callback
 function HttpRequests(method, url, callback) {
     var xhr = new XMLHttpRequest()
 
@@ -205,7 +208,7 @@ function createNewPlaylist() {
 }
 
 
-//pulling playlists from the datastore and displaying
+//pulling playlists from the datastore
 function pullData(callback) {
     console.log("pulling..........")
     var url = "/pullplaylist"
@@ -213,6 +216,7 @@ function pullData(callback) {
     HttpRequests("GET", url, callback)
 }
 
+//shows the pulled data in a stylized form
 function showData(data) {
     document.getElementById("video_body").style.display = "none";
     document.getElementById("video_player").style.display = "none";
@@ -255,7 +259,7 @@ function openPlaylist() {
     HttpRequests("GET", url, showVideos)
 }
 
-
+//shows the playlist videos in a stylized form
 function showVideos(data) {
     var Json = JSON.parse(data)
 
@@ -298,6 +302,7 @@ function showVideos(data) {
     
 }
 
+// shows the playlist videos in the sidebar after opening a video
 function openPlaySuggestions(item)
 {
     console.log(item)
@@ -326,7 +331,7 @@ function openPlaySuggestions(item)
     });
 }
 
-//button actions to add videos to playlist
+//button actions that collect video data to add videos to playlist
 var video_sug_buttons = document.getElementById("video_player")
 var video_buttons = document.getElementById("video_body")
 var video_add_buttons = document.getElementById("addPlay_id")
@@ -363,7 +368,7 @@ video_add_buttons.addEventListener("click", function () {
 })
 
 
-//show playlist buttons in the modal
+//show playlists as buttons in the modal
 function showPlaylist(data) {
     // console.log(data)
     var AddPlaylist = document.getElementById("addPlay_id")
@@ -394,7 +399,7 @@ function SendVideo() {
 }
 
 
-
+//delete a playlist video
 function Deletevideo() {
     console.log(event.target.id)
 
@@ -413,7 +418,7 @@ function Deletevideo() {
 
 }
 
-
+// delete playlist
 function Deleteplaylist() {
     console.log(event.target.id)
 
@@ -421,17 +426,6 @@ function Deleteplaylist() {
     var url = "/deleteplaylist?plid=" + plid
 
     HttpRequests("POST", url, null)
-
-    // window.location.href="/Home.html"
-    // var xhr = new XMLHttpRequest()
-
-    // setTimeout(() => {xhr.onreadystatechange = function () {
-    //     if (this.readyState == 4 && this.status == 200) {
-    //         showData(this.responseText)
-    //     }
-    // }
-    // xhr.open("GET", "/pullplaylist")
-    // xhr.send()}, 100)
 
     setTimeout( () => {
         HttpRequests("GET", "/pullplaylist", showData)
