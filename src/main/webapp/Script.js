@@ -12,9 +12,9 @@ function onSignIn(googleUser) {
     console.log(img + 'Image URL: ' + profile.getImageUrl());
     console.log(email + 'Email: ' + profile.getEmail());
 
-    axios.post("/login?id=" + id_token + "&name=" + name + "&img=" + img + "&email=" + email)
+    fetch("/login?id=" + id_token + "&name=" + name + "&img=" + img + "&email=" + email)
         .then(signOut())
-        .then(setTimeout(()=>{window.location.replace("/Home.html")},1000))
+        .then(setTimeout(() => { window.location.replace("/Home.html") }, 1000))
         .catch(false)
 }
 
@@ -28,8 +28,8 @@ function signOut() {
 
 function signUserOut() {
 
-    axios.post("/logout")
-        .then(setTimeout(()=>{document.location.replace("/loginPage")},1000))
+    fetch("/logout")
+        .then(setTimeout(() => { document.location.replace("/loginPage") }, 1000))
         .catch(false)
 
 }
@@ -43,6 +43,26 @@ function init() {
     gapi.client.setApiKey("AIzaSyBjjQ7FfEoQqusgnvFhj7PtaWuZ43TCay0")
     return gapi.client.load("youtube", "v3", function () {
         console.log("API loaded successfully")
+
+        // function execute() {
+            return gapi.client.youtube.search.list({
+                "part": "snippet",
+                "location": "20.5937,78.9629",
+                "locationRadius": "1000km",
+                "maxResults": 12,
+                "order": "relevance",
+                "publishedAfter": "2015-01-01T00:00:00Z",
+                "type": "video"
+            })
+            .then(function (response) {
+                // Handle the results here (response.result has the parsed body).
+                console.log("Response", response);
+                var results = response.result.items;
+                createVideoDiv(results)
+            },
+                function (err) { console.error("Execute error", err); });
+        // }
+
     })
 }
 
@@ -71,7 +91,7 @@ function init() {
             request.execute(function (response) {
                 // console.log(response)
                 var results = response.result.items;
-                createDiv(results)
+                createVideoDiv(results)
             })
 
             form.reset()
@@ -81,11 +101,11 @@ function init() {
 
 
 //Creating new video items by using youtube api data and displaying
-function createDiv(items) {
-    
-    document.getElementById("video_body").style.display="block"
-    document.getElementById("video_player").style.display="none"
-    document.getElementById("Playlist_body").style.display="none"
+function createVideoDiv(items) {
+
+    document.getElementById("video_body").style.display = "block"
+    document.getElementById("video_player").style.display = "none"
+    document.getElementById("Playlist_body").style.display = "none"
 
     var videos = document.getElementById('video_body')
     videos.innerHTML = "";
@@ -99,7 +119,7 @@ function createDiv(items) {
                                                 <img src="` + element.snippet.thumbnails.high.url + `" alt="test"
                                                     style="max-width: 100%;height: 250px;">
                                             </figure>
-                                            <a href="#`+element.id.videoId+`" data-vid="`+ element.id.videoId + `" onclick="openvideo()">
+                                            <a href="#`+ element.id.videoId + `" data-vid="` + element.id.videoId + `" onclick="openvideo()">
                                                 <span data-vid="`+ element.id.videoId + `" title="` + element.snippet.title + `">
                                                     ` + element.snippet.title.slice(0, 25) + `
                                                 </span>
@@ -121,22 +141,20 @@ function createDiv(items) {
 
 
 //playling videos in a seperate page along with other video suggestions
-function openvideo()
-{
+function openvideo() {
     console.log(document.getElementById("add_sug_playlist"))
 
     document.getElementById('video_body').style.display = "none"
     document.getElementById('video_player').style.display = "block"
 
     var video_id = event.target.getAttribute("data-vid")
-    
+
     document.getElementById('yt_iframe').setAttribute('src', "https://www.youtube.com/embed/" + video_id)
 
 }
 
 //show's the videos displayed for search on a side bar
-function openSuggestions(item)
-{
+function openSuggestions(item) {
     console.log(item)
 
     var videos = document.getElementById('video_sug')
@@ -145,13 +163,19 @@ function openSuggestions(item)
     item.forEach(element => {
 
         var video_elem = document.createElement('div')
-        video_elem.innerHTML = `<div class="card">
-                                    <div class="card-content">
-                                        <a href="#`+element.id.videoId+`" data-vid="`+ element.id.videoId + `" onclick="openvideo()">
-                                            <span data-vid="`+ element.id.videoId + `" title="` + element.snippet.title + `">
+        video_elem.innerHTML = `<div class="card" style="margin-top: 0px;height: 140px;">
+                                    <div class="card-content" style="padding: 0px;">
+                                        <figure style="width: 140px;height: 140px;position: absolute;margin:0;">
+                                            <img src="`+ element.snippet.thumbnails.high.url + `" alt="test"
+                                                style="max-width: 100%;height: 100%;float: left;">
+                                        </figure>
+
+                                        <a href="#`+ element.id.videoId + `" data-vid="` + element.id.videoId + `" onclick="openvideo()" style=" position: absolute; bottom: 0; left: 150px;">
+                                            <span data-vid="`+ element.id.videoId + `" title="` + element.snippet.title + `" >
                                                 ` + element.snippet.title.slice(0, 25) + `
                                             </span>
                                         </a>
+
                                         <a href="#modal_add" class="btn-floating btn-large waves-effect waves-light red modal-trigger add_sug_playlist" 
                                             style="margin-top:10px;float: right;" onclick="pullData(showPlaylist)"
                                             data-id="`+ element.id.videoId + ` " data-img="` + element.snippet.thumbnails.high.url + `" data-title="` + element.snippet.title + `">+</a>
@@ -191,20 +215,18 @@ function HttpRequests(method, url, callback) {
 function createNewPlaylist() {
     var play_create = document.getElementById("Pl_name").value;
 
-    if(play_create)
-    {
+    if (play_create) {
         console.log("creating new playlist")
-    
+
         var url = "/newplaylist?title=" + play_create
-    
+
         HttpRequests("GET", url, showData)
 
     }
-    else
-    {
+    else {
         alert("Your playlist should have a name")
     }
-    
+
 }
 
 
@@ -226,28 +248,42 @@ function showData(data) {
     var jsondata = JSON.parse(data)
 
     var playlist = document.getElementById('Playlist_content')
-    playlist.innerHTML = "";
 
-    jsondata.forEach((e) => {
-        var playlist_elem = document.createElement('div')
+    if(jsondata.length>0)
+    {
 
-        playlist_elem.innerHTML = `<div class="card" id="playlist_card">
-                                        <div class="card-content">
-                                            <div class="card-title">
-                                                <a data-plid="`+ e.plId + `" onclick="openPlaylist()" href="#modal_playlist_videos">`
-                                                    + e.pl_title +
-                                                `</a>
-                                                <button style="float: right;" type="submit" id="` + e.plId + `" onclick="Deleteplaylist()"
-                                                    class="btn waves-effect waves-light grey darken-3 modal-close Playlist_delete"> Delete
-                                                </button>
+        playlist.innerHTML = "";
+    
+        jsondata.forEach((e) => {
+            var playlist_elem = document.createElement('div')
+    
+            playlist_elem.innerHTML = `<div class="card" id="playlist_card">
+                                            <div class="card-content">
+                                                <div class="card-title">
+                                                    <a data-plid="`+ e.plId + `" onclick="openPlaylist()" href="#modal_playlist_videos">`
+                + e.pl_title +
+                `</a>
+                                                    <button style="float: right;" type="submit" id="` + e.plId + `" onclick="Deleteplaylist()"
+                                                        class="btn waves-effect waves-light grey darken-3 modal-close Playlist_delete"> Delete
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>`
+                                        </div>`
+    
+            // console.log(playlist_elem)
+    
+            playlist.appendChild(playlist_elem)
+        });
 
-        // console.log(playlist_elem)
-
-        playlist.appendChild(playlist_elem)
-    });
+    }
+    else
+    {
+        playlist.innerHTML =   `<div class="card" >
+                                    <div class="card-content">
+                                        <h5 style="text-align:center">Create a new playlist to view them here</h5>
+                                    </div>
+                                </div>`
+    }
 }
 
 
@@ -259,7 +295,7 @@ function openPlaylist() {
     HttpRequests("GET", url, showVideos)
 }
 
-//shows the playlist videos in a stylized form
+//shows the playlist videos
 function showVideos(data) {
     var Json = JSON.parse(data)
 
@@ -270,41 +306,53 @@ function showVideos(data) {
     document.querySelector("#Playlist_body").style.display = "none";
 
     var videosTo = document.getElementById("video_body")
-    videosTo.innerHTML = ""
 
-    Json.forEach((e) => {
-        var playlist_elem = document.createElement('div')
+    if(Json.length>0)
+    {
 
-        playlist_elem.innerHTML = `<div class="col s3 container">
-                                    <div class="card" style=" height: 335px;">
-                                        <div class="card-content" style="height: 300px;">
-                                            <figure style="width:260px;height:265px;margin:0;">
-                                                <img src="`+ e.img + `" alt="test"
-                                                    style="max-width: 100%;height: 250px;">
-                                            </figure>
-                                            
-                                            <a href="#`+e.vid.trim()+`" data-vid="`+ e.vid.trim() + `" onclick="openvideo()">
-                                                <span data-vid="`+ e.vid.trim() + `" title="` + e.title + `">
-                                                    ` + e.title.slice(0, 25) + `
-                                                </span>
-                                            </a>
-                                            <a href="#modal_add" class="btn waves-effect waves-light red add_playlist" id="`+ e.ucode + `" data-plid="` + e.plid.trim() + `"
-                                            style="float: right;" onclick="Deletevideo()" >delete</a>
-                                        </div>
+        videosTo.innerHTML = ""
+    
+        Json.forEach((e) => {
+            var playlist_elem = document.createElement('div')
+    
+            playlist_elem.innerHTML =  `<div class="col s3 container">
+                                            <div class="card" style=" height: 335px;">
+                                                <div class="card-content" style="height: 300px;">
+                                                    <figure style="width:260px;height:265px;margin:0;">
+                                                        <img src="`+ e.img + `" alt="test"
+                                                            style="max-width: 100%;height: 250px;">
+                                                    </figure>
+                                                    
+                                                    <a href="#`+ e.vid.trim() + `" data-vid="` + e.vid.trim() + `" onclick="openvideo()">
+                                                        <span data-vid="`+ e.vid.trim() + `" title="` + e.title + `">
+                                                            ` + e.title.slice(0, 25) + `
+                                                        </span>
+                                                    </a>
+                                                    <a href="#modal_add" class="btn waves-effect waves-light red add_playlist" id="`+ e.ucode + `" data-plid="` + e.plid.trim() + `"
+                                                    style="float: right;" onclick="Deletevideo()" >delete</a>
+                                                </div>
+                                            </div>
+                                        </div>`
+    
+            // console.log(playlist_elem)
+            videosTo.appendChild(playlist_elem)
+        })
+    
+        openPlaySuggestions(data)
+    }
+    else
+    {
+        videosTo.innerHTML =   `<div class="card" style="width: 700px;margin: 90px auto auto;display: block;">
+                                    <div class="card-content">
+                                        <h5 style="text-align:center">please add videos to playlist to view them here</h5>
                                     </div>
                                 </div>`
+    }
 
-        // console.log(playlist_elem)
-        videosTo.appendChild(playlist_elem)
-    })
-
-    openPlaySuggestions(data)
-    
 }
 
 // shows the playlist videos in the sidebar after opening a video
-function openPlaySuggestions(item)
-{
+function openPlaySuggestions(item) {
     console.log(item)
     var Json = JSON.parse(item)
     var videos = document.getElementById('video_sug')
@@ -313,10 +361,16 @@ function openPlaySuggestions(item)
     Json.forEach(element => {
 
         var video_elem = document.createElement('div')
-        video_elem.innerHTML = `<div class="card">
-                                    <div class="card-content">
-                                        <a href="#`+element.vid+`" data-vid="`+ element.vid + `" onclick="openvideo()">
-                                            <span data-vid="`+ element.vid + `" title="` + element.title + `">
+        video_elem.innerHTML = `<div class="card" style="margin-top: 0px;height: 140px;">
+                                    <div class="card-content" style="padding: 0px;">
+                                        <figure style="width: 140px;height: 140px;position: absolute;margin:0;">
+                                            <img src="`+ element.img + `" alt="video image"
+                                                style="max-width: 100%;height: 100%;float: left;">
+                                        </figure>
+
+
+                                        <a href="#`+ element.vid + `" data-vid="` + element.vid + `" onclick="openvideo()">
+                                            <span data-vid="`+ element.vid + `" title="` + element.title + `" style=" position: absolute; bottom: 0; left: 150px;">
                                                 ` + element.title.slice(0, 25) + `
                                             </span>
                                         </a>
@@ -348,7 +402,7 @@ video_buttons.addEventListener("click", function () {
     }
 })
 
-video_sug_buttons.addEventListener("click", function(){
+video_sug_buttons.addEventListener("click", function () {
     if (event.target.classList.contains("add_sug_playlist")) {
         title = event.target.getAttribute("data-title")
         img = event.target.getAttribute("data-img")
@@ -412,9 +466,9 @@ function Deletevideo() {
     //pull videos again
     var url1 = "/pullvideos?plid=" + plid
 
-    setTimeout(()=>{
+    setTimeout(() => {
         HttpRequests("GET", url1, showVideos)
-    },800)
+    }, 800)
 
 }
 
@@ -427,7 +481,7 @@ function Deleteplaylist() {
 
     HttpRequests("POST", url, null)
 
-    setTimeout( () => {
+    setTimeout(() => {
         HttpRequests("GET", "/pullplaylist", showData)
     }, 800)
 
